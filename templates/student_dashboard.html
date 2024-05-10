@@ -6,6 +6,25 @@
     <title>Student Dashboard - Quozio</title>
     <!-- Include CSS/JS libraries for charts -->
     <style>
+        /* styles.css */
+                .svg-image {
+                    width: 100%;
+                    height: auto;
+                }
+
+                /* Apply styles directly to SVG elements */
+                .svg-image circle {
+                    fill: blue;
+                    stroke: yellow;
+                    stroke-width: 3px;
+                }
+
+                /* Or, apply styles to SVG elements using class or ID selectors */
+                .svg-image .line {
+                    stroke: green;
+                    stroke-width: 2px;
+                }
+
         body {
             font-family: Arial, sans-serif;
             background-color: #f2f2f2;
@@ -117,7 +136,7 @@ nav ul li a:hover {
                     <h2>Your Total Score: {{ total_score if total_score else 'No scores available' }}</h2>
                 </section>
                 <section id="scores">
-                    <!-- Table of scores or other content -->
+                    <img src="{{ url_for('student_svg_scores') }}" alt="Performance Graph">
                 </section>
             </div>
     </main>
