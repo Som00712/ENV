@@ -1,7 +1,8 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, Response
 from flask_mysqldb import MySQL
 import MySQLdb.cursors
 import re
+from flask import flash
 
 app = Flask(__name__, static_url_path='/static/style.css')
 app.secret_key = 'your_secret_key'
@@ -126,6 +127,50 @@ def student_dashboard():
         return render_template('student_dashboard.html', scores=scores, latest_score=latest_score, total_score=total_score)
     else:
         return redirect(url_for('login'))
+    
+   
+@app.route('/student/student_svg_scores')
+def student_svg_scores():
+    if 'loggedin' in session and session['loggedin'] and 'username' in session and 'Role' in session and session['Role'] == 'student':
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('''
+            SELECT Subjects.SubjectName, SUM(Scores.Score) as TotalScore
+            FROM Scores
+            JOIN Subjects ON Scores.SubjectID = Subjects.SubjectID
+            WHERE Scores.StudentID = %s
+            GROUP BY Scores.SubjectID, Subjects.SubjectName
+            ORDER BY Subjects.SubjectName
+        ''', (session['id'],))
+        scores = cursor.fetchall()
+        svg = generate_svg_with_graph(scores, 400, 300)  # Use predefined SVG width and height or adjust as needed
+        return Response(svg, mimetype='image/svg+xml')
+    else:
+        return redirect(url_for('login'))
+
+def generate_svg_with_graph(scores, svg_width, svg_height):
+    if not scores:
+        return "<svg></svg>"  # Return an empty SVG if no scores
+
+    max_score = max(score['TotalScore'] for score in scores)
+    bar_width = svg_width / len(scores)
+
+    svg = ['<svg width="{}" height="{}" xmlns="http://www.w3.org/2000/svg">'.format(svg_width, svg_height)]
+    for i, score in enumerate(scores):
+        bar_height = (score['TotalScore'] / max_score) * (svg_height - 50)
+        # Draw the bars
+        svg.append('<rect x="{}" y="{}" width="{}" height="{}" style="fill:blue" />'.format(
+            i * bar_width, svg_height - bar_height, bar_width - 10, bar_height))
+        # Add text for score
+        svg.append('<text x="{}" y="{}" font-size="12" text-anchor="middle" fill="black">{}</text>'.format(
+            i * bar_width + bar_width / 2, svg_height - bar_height - 5, score['TotalScore']))
+        # Add text for subject name
+        svg.append('<text x="{}" y="{}" font-size="12" text-anchor="middle" fill="black">{}</text>'.format(
+        i * bar_width + bar_width / 2, svg_height + 15, f"{score['SubjectName']} ({score['TotalScore']})"))
+
+    svg.append('</svg>')
+    return "".join(svg)
+
+
 
 @app.route('/take_quiz', methods=['GET', 'POST'])
 def take_quiz():
@@ -183,7 +228,7 @@ def teacher_dashboard():
     else:
         return redirect(url_for('login'))
 
-from flask import flash
+
 
 @app.route('/createquiz', methods=['GET', 'POST'])
 def createquiz():
