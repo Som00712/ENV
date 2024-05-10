@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Take Quiz</title>
+    <!-- Include CSS styles -->
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+    
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+    
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+    
+        form {
+            margin: 20px 0;
+        }
+    
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            background-color: #fafafa;
+            cursor: pointer;
+        }
+    
+        .question {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+    
+        h3 {
+            margin-top: 0;
+            color: #555;
+        }
+    
+        label {
+            display: block;
+            margin: 5px 0;
+        }
+    
+        input[type="radio"] {
+            margin-right: 10px;
+        }
+    
+        button[type="submit"] {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+    
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+    
+</head>
+<body>
+    <div class="container">
+        <h1>Select a Quiz</h1>
+        <form action="/take_quiz" method="POST">
+            <!-- Dropdown for selecting the quiz subject -->
+            <select name="subject" onchange="this.form.submit()">
+                <option value="">Select a subject</option>
+                {% for subject in subjects %}
+                <option value="{{ subject.SubjectID }}" {% if selected_subject == subject.SubjectID %}selected{% endif %}>
+                    {{ subject.SubjectName }}
+                </option>
+                {% endfor %}
+            </select>
+        </form>
+        {% if questions %}
+        <h2>Questions</h2>
+        <form action="/submit_quiz" method="POST">
+            {% for question in questions %}
+            <div class="question">
+                <h3>{{ question.QuestionText }}</h3>
+                <label><input type="radio" name="answer{{ question.QuestionID }}" value="A">{{ question.OptionA }}</label>
+                <label><input type="radio" name="answer{{ question.QuestionID }}" value="B">{{ question.OptionB }}</label>
+                <label><input type="radio" name="answer{{ question.QuestionID }}" value="C">{{ question.OptionC }}</label>
+                <label><input type="radio" name="answer{{ question.QuestionID }}" value="D">{{ question.OptionD }}</label>
+            </div>
+            {% endfor %}
+            <button type="submit">Submit Quiz</button>
+        </form>
+        {% endif %}
+    </div>
+</body>
+</html>

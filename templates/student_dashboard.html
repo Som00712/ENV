@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - Quozio</title>
+    <!-- Include CSS/JS libraries for charts -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        form {
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        /* Style for the header */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: #333;
+    color: #fff;
+}
+
+/* Style for the navigation links */
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin-right: 20px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: #fff;
+    font-weight: bold;
+}
+
+nav ul li a:hover {
+    color: #ffcc00;
+}
+        .question {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        input[type="radio"] {
+            margin-right: 10px;
+        }
+        button[type="submit"] {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Welcome to Quozio!</h1>
+        <nav>
+            <ul>
+                <li><a href="#quizzes">Quizzes</a></li>
+                <li><a href="#progress">Progress</a></li>
+                <li><a href="#notifications">Notifications</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <main>
+        <section id="quizzes">
+            <h2>Available Quizzes</h2>
+            <form action="{{ url_for('take_quiz') }}" method="POST">
+                <label for="subject">Select Subject:</label>
+                <select name="subject" id="subject">
+                    <option value="maths">Maths</option>
+                    <option value="science">Science</option>
+                </select>
+                <button type="submit">Take Quiz</button>
+            </form>
+            <div class="container">
+                <section id="latest_score">
+                    <h2>Your Latest Score: {{ latest_score if latest_score else 'No recent quiz taken' }}</h2>
+                </section>
+                <section id="total_score">
+                    <h2>Your Total Score: {{ total_score if total_score else 'No scores available' }}</h2>
+                </section>
+                <section id="scores">
+                    <!-- Table of scores or other content -->
+                </section>
+            </div>
+    </main>
+    
+    <footer>
+        <p>&copy; 2024 Quozio - All rights reserved.</p>
+    </footer>
+    
+</body>
+</html>

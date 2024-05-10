@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to the Index Page</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Updated font for a more modern look */
+            background-color: #f4f6f8;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            width: 350px; /* Slightly wider for better layout */
+            padding: 30px;
+            background-color: #ffffff;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15); /* More pronounced shadow for depth */
+            border-radius: 10px; /* Rounded corners for modern feel */
+            text-align: center;
+        }
+        h1 {
+            color: #0056b3; /* Darker blue for better contrast */
+            margin-bottom: 30px;
+        }
+        form {
+            width: 100%; /* Ensures form utilizes full container width */
+        }
+        label {
+            display: block;
+            text-align: left;
+            margin-bottom: 8px; /* Increased spacing for better readability */
+            font-size: 16px; /* Larger font size for readability */
+        }
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 12px; /* Larger padding for better touch interaction */
+            margin-bottom: 20px; /* More space between fields */
+            border: 2px solid #ccc; /* Thicker border */
+            border-radius: 5px; /* Subtle border radius */
+            transition: border-color 0.3s; /* Smooth transition for interaction */
+        }
+        input[type="text"]:focus, input[type="password"]:focus {
+            border-color: #007bff; /* Highlight color on focus */
+        }
+        input[type="submit"] {
+            width: 100%;
+            padding: 12px; /* Uniform padding with input fields */
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px; /* Larger font for emphasis */
+            transition: background-color 0.3s; /* Smooth transition for hover effect */
+        }
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth on hover */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to Our Application</h1>
+        <form id="indexForm" action="/login" method="POST">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+            <input type="submit" value="Login">
+        </form>
+    </div>
+</body>
+</html>

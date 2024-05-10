@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* Your CSS styles go here */
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-image: url('https://i.pinimg.com/originals/5b/4c/d2/5b4cd292f6f382ab8d8a51b9fcaad5ed.jpg');
+            background-size: cover;
+            background
+            background-repeat: no-repeat;
+            color: #333333;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            color: black; /* Set input text color to black for better visibility */
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color:;
+            color: cream;
+            cursor: pointer;
+        }
+
+        /* CSS for smaller screens (e.g., mobile) */
+        @media only screen and (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            input[type="text"],
+            input[type="password"],
+            select,
+            input[type="submit"] {
+                width: 100%;
+            }
+
+            form {
+                width: 300px; /* Adjust the width of the form as needed */
+                margin: 0 auto; /* This will center the form horizontally */
+            }
+        }
+
+        form {
+            width: 300px;
+            margin: 0 auto;
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        /* Styling for error message */
+        .error-message {
+            color: red;
+        }
+    </style>
+</head>
+
+</head>
+<body>
+    <h1>Login</h1>
+    <form method="POST" action="/login">
+        <label for="username">Username:</label><br>
+        <input type="text" id="username" name="username" required><br><br>
+        <label for="password">Password:</label><br>
+        <input type="password" id="password" name="password" required><br><br>
+        <label for="role">Role:</label><br>
+        <select id="role" name="role" required>
+            <option value="admin">Admin</option>
+            <option value="teacher">Teacher</option>
+            <option value="student">Student</option>
+        </select><br><br>
+        <input type="submit" value="Login">
+    </form>
+    <!-- Display error message in red text -->
+    <p class="error-message">{{ msg }}</p>
+    <p><strong>Don't have an account? <a href="{{ url_for('register_form') }}">Register here<strong></a></p>
+</body>
+</html>
+

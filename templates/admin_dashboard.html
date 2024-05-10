@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+</head>
+<body>
+    <h1>Welcome to the Admin Dashboard!</h1>
+    
+    <!-- Search Users Form -->
+    <h2>Search Users</h2>
+    <form action="{{ url_for('admin_dashboard') }}" method="post">
+        <label for="search_term">Search Term:</label>
+        <input type="text" id="search_term" name="search_term">
+        <button type="submit">Search</button>
+    </form>
+    
+        <!-- Display Users -->
+        <h2>Users in the System</h2>
+        <table>
+            <tr>
+                <th>User ID</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Role</th>
+            </tr>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.UserID }}</td>
+                <td>{{ user.Username }}</td>
+                <td>{{ user.Email }}</td>
+                <td>{{ user.Role }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </body>
+    </html>
+</body>
+</html>
+
