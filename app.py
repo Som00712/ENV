@@ -309,20 +309,30 @@ def createquiz():
 @app.route('/admin/dashboard', methods=['GET', 'POST'])
 def admin_dashboard():
     if 'loggedin' in session and session['loggedin'] and 'username' in session and 'Role' in session and session['Role'] == 'admin':
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
         if request.method == 'POST':
             search_term = request.form['search_term']
-            cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-            query = "SELECT * FROM Users WHERE Username LIKE %s OR Email LIKE %s"
-            cursor.execute(query, (f"%{search_term}%", f"%{search_term}%"))
-            users = cursor.fetchall()
-            return render_template('admin_dashboard.html', users=users)
+            cursor.execute("SELECT * FROM Users WHERE Username LIKE %s OR Email LIKE %s", (f"%{search_term}%", f"%{search_term}%"))
         else:
-            cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
             cursor.execute('SELECT UserID, Username, Email, Role FROM Users')
-            users = cursor.fetchall()
-            return render_template('admin_dashboard.html', users=users)
+        users = cursor.fetchall()
+        return render_template('admin_dashboard.html', users=users)
     else:
         return redirect(url_for('login'))
+    
+
+@app.route('/delete_user/<int:user_id>', methods=['GET'])
+def delete_user(user_id):
+    if 'loggedin' in session and session['loggedin'] and 'username' in session and 'Role' in session and session['Role'] == 'admin':
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('DELETE FROM Users WHERE UserID = %s', (user_id,))
+        mysql.connection.commit()
+        flash('User successfully deleted.', 'success')
+        return redirect(url_for('admin_dashboard'))
+    else:
+        flash('Unauthorized attempt to delete user.', 'error')
+        return redirect(url_for('login'))
+    
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
