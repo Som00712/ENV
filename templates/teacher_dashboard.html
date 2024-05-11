@@ -29,7 +29,6 @@
             background-color: #0056b3;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
-        /* Additional styles for other dashboard elements */
         .container {
             max-width: 800px;
             margin: 0 auto;
@@ -38,13 +37,114 @@
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
+        .delete-button {
+            background-color: #ff6347;
+            padding: 5px 10px;
+            border-radius: 5px;
+            color: white;
+            text-decoration: none;
+        }
+        .delete-button:hover {
+            background-color: #e53e30;
+        }
+        .questions-list {
+            list-style: none;
+            padding: 0;
+            width: 100%;
+        }
+        .questions-list li {
+            text-align: center;
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+        .questions-list li:last-child {
+            border-bottom: none;
+        }
+        .flash-messages {
+            margin-bottom: 20px;
+            text-align: center;
+            animation: fadeOut 10s forwards;
+        }
+        @keyframes fadeOut {
+            0%, 80% {
+                opacity: 1;
+                visibility: visible;
+            }
+            100% {
+                opacity: 0;
+                visibility: hidden;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+            
+            th, td {
+                border: 1px solid #ccc;
+                padding: 8px;
+                text-align: left;
+            }
+            
+            th {
+                background-color: #f2f2f2;
+            }
+            
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Welcome to the Teacher Dashboard!</h1>
-        <a href="{{ url_for('createquiz') }}">Create Quiz</a>
-
+            <div class="container">
+                <h1>Welcome to the Teacher Dashboard!</h1>
+                <a href="{{ url_for('createquiz') }}">Create Quiz</a>
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        <div class="flash-messages">
+                            {% for message in messages %}
+                                <p>{{ message }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+                <div id="ManageQuestions" class="tabcontent">
+                    <h3>Manage Questions</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Question</th>
+                                <th>Subject</th>
+                                <th>Options</th>
+                                <th>Correct</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for question in questions %}
+                            <tr>
+                                <td>{{ question.QuestionText }}</td>
+                                <td>{{ question.SubjectName }}</td>
+                                <td>A: {{ question.OptionA }}<br>B: {{ question.OptionB }}<br>C: {{ question.OptionC }}<br>D: {{ question.OptionD }}</td>
+                                <td>{{ question.CorrectOption }}</td>
+                                <td>
+                                    <a href="{{ url_for('delete_question', question_id=question.QuestionID) }}" class="delete-button">Delete</a>
+                                </li>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                </ul>
+            </div>
+        </body>
+        </html>
     </div>
 </body>
 </html>
+
+
+
+
+
+
+
+        

@@ -1,10 +1,9 @@
-from flask import Flask, render_template, request, redirect, url_for, session, Response
+from flask import Flask, render_template, request, redirect, url_for, session, Response, flash
 from flask_mysqldb import MySQL
 import MySQLdb.cursors
 import re
-from flask import flash
-
-app = Flask(__name__, static_url_path='/static/style.css')
+# Initialize Flask application
+app = Flask(__name__, static_url_path='/static')
 app.secret_key = 'your_secret_key'
 
 # Configure MySQL connection
@@ -13,6 +12,7 @@ app.config['MYSQL_USER'] = 'myuser'
 app.config['MYSQL_PASSWORD'] = 'mypassword'
 app.config['MYSQL_DB'] = 'Quozio'
 mysql = MySQL(app)
+
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -221,10 +221,30 @@ def submit_quiz():
     else:
         return redirect(url_for('login'))
 
-@app.route('/teacher/dashboard')
+@app.route('/teacher/dashboard', methods=['GET'])
 def teacher_dashboard():
     if 'loggedin' in session and session['loggedin'] and 'username' in session and 'Role' in session and session['Role'] == 'teacher':
-        return render_template('teacher_dashboard.html')
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute("""
+            SELECT q.QuestionID, q.SubjectID, q.QuestionText, q.OptionA, q.OptionB, q.OptionC, q.OptionD, q.CorrectOption, s.SubjectName
+            FROM questions q
+            JOIN subjects s ON q.SubjectID = s.SubjectID
+            ORDER BY q.QuestionID DESC
+        """)
+        questions = cursor.fetchall()
+        return render_template('teacher_dashboard.html', questions=questions)
+    else:
+        return redirect(url_for('login'))
+
+
+@app.route('/delete_question/<int:question_id>', methods=['GET'])
+def delete_question(question_id):
+    if 'loggedin' in session and session['loggedin'] and 'username' in session and 'Role' in session and session['Role'] == 'teacher':
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('DELETE FROM Questions WHERE QuestionID = %s', (question_id,))
+        mysql.connection.commit()
+        flash("Question deleted successfully!")
+        return redirect(url_for('teacher_dashboard'))
     else:
         return redirect(url_for('login'))
 
@@ -232,7 +252,7 @@ def teacher_dashboard():
 
 @app.route('/createquiz', methods=['GET', 'POST'])
 def createquiz():
-    # Check if the user is logged in and has the teacher role
+    # Ensure user is logged in and has the teacher role
     if not ('loggedin' in session and session['loggedin'] and 'username' in session and 'Role' in session and session['Role'] == 'teacher'):
         return redirect(url_for('login'))
 
@@ -247,14 +267,12 @@ def createquiz():
             'D': request.form.get('optionD')
         }
         correct_option = request.form.get('correctOption')
-
-        # Input validation (basic example)
+# Input validation
         if not all([subject_name, question_text, options['A'], options['B'], options['C'], options['D'], correct_option]):
             flash("All fields are required.", "error")
             return render_template('create_quiz.html')
-
+        
         try:
-            # Connect to the database and insert the new quiz
             cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 
             # Get the subject ID based on the subject name
@@ -264,24 +282,27 @@ def createquiz():
                 flash("Subject not found.", "error")
                 return render_template('create_quiz.html')
 
-            # Insert the new question and its options into the database
+            # Insert the new question into the database
+            # Insert the new question into the database
             cursor.execute('''
                 INSERT INTO Questions (SubjectID, QuestionText, OptionA, OptionB, OptionC, OptionD, CorrectOption) 
                 VALUES (%s, %s, %s, %s, %s, %s, %s)
             ''', (subject['SubjectID'], question_text, options['A'], options['B'], options['C'], options['D'], correct_option))
             mysql.connection.commit()
-
-            # Success feedback
+            
             flash("Quiz created successfully!", "success")
-            return redirect(url_for('teacher_dashboard'))
+            return redirect(url_for('teacher_dashboard'))  # Redirect to the dashboard after successful creation
         
+        except MySQLdb.Error as e:
+            mysql.connection.rollback()  # Rollback transaction on error
+            flash(f"Database error: {e}", "error")
+            return render_template('create_quiz.html')
         except Exception as e:
-            # Handle any errors that occur during database interaction
             mysql.connection.rollback()
-            flash(str(e), "error")
+            flash(f"Error: {e}", "error")
             return render_template('create_quiz.html')
 
-    # If it's not a POST request, just render the empty form
+    # If it's not a POST request, render the form
     return render_template('create_quiz.html')
 
 
