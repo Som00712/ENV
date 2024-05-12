@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, R
 from flask_mysqldb import MySQL
 import MySQLdb.cursors
 import re
+
 # Initialize Flask application
 app = Flask(__name__, static_url_path='/static')
 app.secret_key = 'your_secret_key'
@@ -148,27 +149,65 @@ def student_svg_scores():
         return redirect(url_for('login'))
 
 def generate_svg_with_graph(scores, svg_width, svg_height):
+    import random  # Ensure random is imported here if not globally done
+    import math
     if not scores:
         return "<svg></svg>"  # Return an empty SVG if no scores
 
-    max_score = max(score['TotalScore'] for score in scores)
-    bar_width = svg_width / len(scores)
+    total_score = sum(score['TotalScore'] for score in scores)
+    if total_score == 0:
+        return "<svg></svg>"  # Return an empty SVG if sum of scores is zero
+
+    radius = min(svg_width, svg_height) / 2 - 10
+    center_x, center_y = svg_width / 2, svg_height / 2
+    start_angle = 0
 
     svg = ['<svg width="{}" height="{}" xmlns="http://www.w3.org/2000/svg">'.format(svg_width, svg_height)]
-    for i, score in enumerate(scores):
-        bar_height = (score['TotalScore'] / max_score) * (svg_height - 50)
-        # Draw the bars
-        svg.append('<rect x="{}" y="{}" width="{}" height="{}" style="fill:blue" />'.format(
-            i * bar_width, svg_height - bar_height, bar_width - 10, bar_height))
-        # Add text for score
-        svg.append('<text x="{}" y="{}" font-size="12" text-anchor="middle" fill="black">{}</text>'.format(
-            i * bar_width + bar_width / 2, svg_height - bar_height - 5, score['TotalScore']))
-        # Add text for subject name
-        svg.append('<text x="{}" y="{}" font-size="12" text-anchor="middle" fill="black">{}</text>'.format(
-        i * bar_width + bar_width / 2, svg_height + 15, f"{score['SubjectName']} ({score['TotalScore']})"))
+
+    colors = ['red', 'green', 'yellow', 'orange', 'pink', 'cyan', 'magenta', 'lime']  # More colors
+    for score in scores:
+        # Select a color for the current slice
+        fill_color = random.choice(colors)
+
+        # Calculate the angle for each slice
+        slice_angle = (score['TotalScore'] / total_score) * 360
+        end_angle = start_angle + slice_angle
+
+        # Convert angles to radians for the calculations
+        start_rad = math.radians(start_angle)
+        end_rad = math.radians(end_angle)
+
+        # Calculate the end points for each slice
+        x1 = center_x + radius * math.cos(start_rad)
+        y1 = center_y + radius * math.sin(start_rad)
+        x2 = center_x + radius * math.cos(end_rad)
+        y2 = center_y + radius * math.sin(end_rad)
+
+        # Determine if the slice is more than 180 degrees
+        large_arc = 1 if slice_angle > 180 else 0
+
+        # Create the path for the slice
+        path_d = f"M {center_x} {center_y} L {x1} {y1} A {radius} {radius} 0 {large_arc} 1 {x2} {y2} z"
+        svg.append(f'<path d="{path_d}" fill="{fill_color}"/>')
+        
+        # Calculate label positioning
+        label_angle_rad = math.radians(start_angle + slice_angle / 2)
+        label_x = center_x + (radius / 1.5) * math.cos(label_angle_rad)
+        label_y = center_y + (radius / 1.5) * math.sin(label_angle_rad)
+        
+        # Text visibility: Use white or black based on slice color
+        text_fill = 'black' if fill_color in ['blue', 'green', 'purple', 'red', 'cyan'] else 'red'
+    
+        # Add label for the slice, increased font size to 16 and stroke-width to 0.3
+        svg.append(f'<text x="{label_x}" y="{label_y}" font-size="19" text-anchor="middle" fill="{text_fill}" stroke="black" stroke-width="0.3">'
+                   f'{score["SubjectName"]} ({100 * score["TotalScore"] / total_score:.1f}%)</text>')
+        
+        start_angle = end_angle
 
     svg.append('</svg>')
     return "".join(svg)
+
+
 
 
 
