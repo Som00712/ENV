@@ -67,15 +67,14 @@ def logout():
     session.pop('id', None)
     session.pop('username', None)
     return redirect(url_for('login'))
-
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     msg = ''
-    if request.method == 'POST' and 'username' in request.form and 'password' in request.form and 'email' in request.form and 'role' in request.form:
+    default_role = 'student'  # Set the default role for all new registrations
+    if request.method == 'POST' and 'username' in request.form and 'password' in request.form and 'email' in request.form:
         username = request.form['username']
         password = request.form['password']
         email = request.form['email']
-        role = request.form['role']
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
         cursor.execute('SELECT * FROM Users WHERE Username = %s', (username,))
         account = cursor.fetchone()
@@ -85,21 +84,17 @@ def register():
             msg = 'Invalid email address!'
         elif not re.match(r'[A-Za-z0-9]+', username):
             msg = 'Username must contain only characters and numbers!'
-        elif not username or not password or not email or not role:
+        elif not username or not password or not email:
             msg = 'Please fill out the form!'
         else:
-            cursor.execute('INSERT INTO Users (Username, Email, PasswordHash, Role) VALUES (%s, %s, %s, %s)', (username, email, password, role))
+            cursor.execute('INSERT INTO Users (Username, Email, PasswordHash, Role) VALUES (%s, %s, %s, %s)', (username, email, password, default_role))
             mysql.connection.commit()
             msg = 'You have successfully registered!'
-            if role == 'admin':
-                return redirect(url_for('admin_dashboard'))
-            elif role == 'teacher':
-                return redirect(url_for('teacher_dashboard'))
-            else:
-                return redirect(url_for('student_dashboard'))
+            return redirect(url_for('student_dashboard'))  # Redirect to the default dashboard or home page
     elif request.method == 'POST':
         msg = 'Please fill out the form!'
     return render_template('register.html', msg=msg)
+
 
 @app.route('/register/form')
 def register_form():
@@ -196,7 +191,7 @@ def generate_svg_with_graph(scores, svg_width, svg_height):
         label_y = center_y + (radius / 1.5) * math.sin(label_angle_rad)
         
         # Text visibility: Use white or black based on slice color
-        text_fill = 'black' if fill_color in ['blue', 'green', 'purple', 'red', 'cyan'] else 'red'
+        text_fill = 'black' if fill_color in ['blue', 'green', 'purple', 'red', 'cyan'] else 'blue'
     
         # Add label for the slice, increased font size to 16 and stroke-width to 0.3
         svg.append(f'<text x="{label_x}" y="{label_y}" font-size="19" text-anchor="middle" fill="{text_fill}" stroke="black" stroke-width="0.3">'
@@ -322,7 +317,6 @@ def createquiz():
                 return render_template('create_quiz.html')
 
             # Insert the new question into the database
-            # Insert the new question into the database
             cursor.execute('''
                 INSERT INTO Questions (SubjectID, QuestionText, OptionA, OptionB, OptionC, OptionD, CorrectOption) 
                 VALUES (%s, %s, %s, %s, %s, %s, %s)
@@ -344,25 +338,35 @@ def createquiz():
     # If it's not a POST request, render the form
     return render_template('create_quiz.html')
 
-
 @app.route('/admin/dashboard', methods=['GET', 'POST'])
 def admin_dashboard():
-    if 'loggedin' in session and session['loggedin'] and 'username' in session and 'Role' in session and session['Role'] == 'admin':
+    if 'loggedin' in session and session['loggedin'] and 'username' in session and session['Role'] == 'admin':
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
         if request.method == 'POST':
-            search_term = request.form['search_term']
-            cursor.execute("SELECT * FROM Users WHERE Username LIKE %s OR Email LIKE %s", (f"%{search_term}%", f"%{search_term}%"))
+            if 'search_term' in request.form:
+                search_term = request.form['search_term']
+                cursor.execute("SELECT * FROM Users WHERE Username LIKE %s OR Email LIKE %s", (f"%{search_term}%", f"%{search_term}%"))
+            elif 'update_role' in request.form:
+                user_id = request.form['user_id']
+                new_role = request.form['new_role']
+                cursor.execute("UPDATE Users SET Role = %s WHERE UserID = %s", (new_role, user_id))
+                mysql.connection.commit()
+                flash(f"Role updated successfully for user ID {user_id} to {new_role}.", 'success')
+            return redirect(url_for('admin_dashboard'))
         else:
             cursor.execute('SELECT UserID, Username, Email, Role FROM Users')
         users = cursor.fetchall()
         return render_template('admin_dashboard.html', users=users)
     else:
+        flash('You must be logged in as an admin to view this page.', 'error')
         return redirect(url_for('login'))
+
+
     
 
-@app.route('/delete_user/<int:user_id>', methods=['GET'])
+@app.route('/delete_user/<int:user_id>', methods=['POST'])
 def delete_user(user_id):
-    if 'loggedin' in session and session['loggedin'] and 'username' in session and 'Role' in session and session['Role'] == 'admin':
+    if 'loggedin' in session and session['loggedin'] and 'username' in session and session['Role'] == 'admin':
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
         cursor.execute('DELETE FROM Users WHERE UserID = %s', (user_id,))
         mysql.connection.commit()

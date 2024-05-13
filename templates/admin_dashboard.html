@@ -5,80 +5,146 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f2f5;
-            margin: 0;
-            padding: 20px;
-            color: #333;
+        h1 {
+            font-size: 24px; /* Larger font size for prominence */
+            color: #333; /* Dark color for contrast against light backgrounds */
+            text-align: center; /* Center-align the header text */
+            padding: 20px; /* Add padding around the text */
+            background-color: #4CAF50; /* Background color to match the table headers */
+            color: white; /* White text color for contrast */
+            margin-top: 0; /* Remove the default top margin */
+            margin-bottom: 20px; /* Add some spacing below the header */
+            border-radius: 8px; /* Rounded corners for aesthetic alignment with container */
+        }        
+        .alert {
+            opacity: 1;
+            animation: fadeOut 12s linear forwards; /* Animation lasts for 12 seconds */
         }
-        .container {
-            max-width: 800px;
-            margin: auto;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            padding: 8px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        th {
-            background-color: #4CAF50;
-            color: white;
-        }
-        .delete-button {
-            color: white;
-            background-color: #f44336;
-            padding: 5px 10px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .delete-button:hover {
-            background-color: #d32f2f;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Welcome to the Admin Dashboard!</h1>
         
-        <!-- Search Users Form -->
-        <form action="{{ url_for('admin_dashboard') }}" method="post">
-            <label for="search_term">Search Term:</label>
-            <input type="text" id="search_term" name="search_term">
-            <button type="submit">Search</button>
+        @keyframes fadeOut {
+            0%, 83% {
+                opacity: 1; /* Full opacity for the first 10 seconds */
+            }
+            100% {
+                opacity: 0;
+                height: 0;
+                padding: 0;
+                overflow: hidden; /* Completely fades out and collapses by the end */
+            }
+        }
+        Explanation of the CSS Code:
+        Animation Duration: The total duration of the animation is set to 12 seconds.
+        Keyframes:
+        For the first 83% of the time (which corresponds to roughly 10 seconds), the opacity remains 1.
+        The transition to opacity 0 is set from 83% to 100%, providing a 2-second window for the fade-out effect. This timing is adjustable based on your needs.
+        Complete HTML Example:
+        Here's the full HTML with the integrated CSS animation for the message fade-out:
+        
+        html
+        Copy code
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Admin Dashboard</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    background-color: #f0f2f5;
+                    margin: 0;
+                    padding: 20px;
+                    color: #333;
+                }
+                .container {
+                    max-width: 800px;
+                    margin: auto;
+                    background-color: #fff;
+                    padding: 20px;
+                    border-radius: 8px;
+                    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                }
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                }
+                th, td {
+                    padding: 8px;
+                    text-align: left;
+                    border-bottom: 1px solid #ddd;
+                }
+                th {
+                    background-color: #4CAF50;
+                    color: white;
+                }
+                .delete-button {
+                    color: white;
+                    background-color: #f44336;
+                    padding: 5px 10px;
+                    border: none;
+                    border-radius: 5px;
+                    cursor: pointer;
+                }
+                .delete-button:hover {
+                    background-color: #d32f2f;
+                }
+                .alert {
+                    opacity: 1;
+                    animation: fadeOut 12s linear forwards; /* Updated fade out timing */
+                }
+                @keyframes fadeOut {
+                    0%, 83% {
+                        opacity: 1;
+                    }
+                    100% {
+                        opacity: 0;
+                        height: 0;
+                        padding: 0;
+                        overflow: hidden;
+                    }
+                }
+            </style>
         </form>
-
+        <body>
+            <h1>Welcome to the admin dashbord</h1>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </body>
+        
         <!-- Display Users -->
         <table>
-            <thead>
-                <tr>
-                    <th>User ID</th>
-                    <th>Username</th>
-                    <th>Email</th>
-                    <th>Role</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for user in users %}
-                <tr>
-                    <td>{{ user.UserID }}</td>
-                    <td>{{ user.Username }}</td>
-                    <td>{{ user.Email }}</td>
-                    <td>{{ user.Role }}</td>
-                    <td><a href="{{ url_for('delete_user', user_id=user.UserID) }}" class="delete-button">Delete</a></td>
-                </tr>
-                {% endfor %}
-            </tbody>
+            <tr>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Actions</th>
+            </tr>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.Username }}</td>
+                <td>{{ user.Email }}</td>
+                <td>{{ user.Role }}</td>
+                <td>
+                    <form action="{{ url_for('delete_user', user_id=user.UserID) }}" method="post">
+                        <input type="submit" value="Delete" class="delete-button">
+                    </form>
+                    <form action="" method="post">
+                        <input type="hidden" name="user_id" value="{{ user.UserID }}">
+                        <select name="new_role">
+                            <option value="admin">Admin</option>
+                            <option value="teacher">Teacher</option>
+                            <option value="student">Student</option>
+                        </select>
+                        <button type="submit" name="update_role">Update Role</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
         </table>
     </div>
 </body>
