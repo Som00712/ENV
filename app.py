@@ -322,7 +322,6 @@ def createquiz():
                 return render_template('create_quiz.html')
 
             # Insert the new question into the database
-            # Insert the new question into the database
             cursor.execute('''
                 INSERT INTO Questions (SubjectID, QuestionText, OptionA, OptionB, OptionC, OptionD, CorrectOption) 
                 VALUES (%s, %s, %s, %s, %s, %s, %s)
@@ -346,18 +345,28 @@ def createquiz():
 
 
 @app.route('/admin/dashboard', methods=['GET', 'POST'])
+@app.route('/admin/dashboard', methods=['GET', 'POST'])
 def admin_dashboard():
-    if 'loggedin' in session and session['loggedin'] and 'username' in session and 'Role' in session and session['Role'] == 'admin':
+    if 'loggedin' in session and session['loggedin'] and 'username' in session and session['Role'] == 'admin':
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
         if request.method == 'POST':
-            search_term = request.form['search_term']
-            cursor.execute("SELECT * FROM Users WHERE Username LIKE %s OR Email LIKE %s", (f"%{search_term}%", f"%{search_term}%"))
+            if 'search_term' in request.form:
+                search_term = request.form['search_term']
+                cursor.execute("SELECT * FROM Users WHERE Username LIKE %s OR Email LIKE %s", (f"%{search_term}%", f"%{search_term}%"))
+            elif 'update_role' in request.form:
+                user_id = request.form['user_id']
+                new_role = request.form['new_role']
+                cursor.execute("UPDATE Users SET Role = %s WHERE UserID = %s", (new_role, user_id))
+                mysql.connection.commit()
+                flash('Role updated successfully.', 'success')
+            return redirect(url_for('admin_dashboard'))
         else:
             cursor.execute('SELECT UserID, Username, Email, Role FROM Users')
         users = cursor.fetchall()
         return render_template('admin_dashboard.html', users=users)
     else:
         return redirect(url_for('login'))
+
     
 
 @app.route('/delete_user/<int:user_id>', methods=['GET'])

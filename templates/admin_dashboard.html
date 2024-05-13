@@ -59,27 +59,29 @@
 
         <!-- Display Users -->
         <table>
-            <thead>
-                <tr>
-                    <th>User ID</th>
-                    <th>Username</th>
-                    <th>Email</th>
-                    <th>Role</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
+            <tr>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Actions</th>
+            </tr>
+            <table>
                 {% for user in users %}
                 <tr>
-                    <td>{{ user.UserID }}</td>
                     <td>{{ user.Username }}</td>
                     <td>{{ user.Email }}</td>
                     <td>{{ user.Role }}</td>
-                    <td><a href="{{ url_for('delete_user', user_id=user.UserID) }}" class="delete-button">Delete</a></td>
+                    <td>
+                        <form action="" method="post">
+                            <input type="hidden" name="user_id" value="{{ user.UserID }}">
+                            <select name="new_role">
+                                <option value="admin">Admin</option>
+                                <option value="teacher">Teacher</option>
+                                <option value="student">Student</option>
+                            </select>
+                            <button type="submit" name="update_role">Update Role</button>
+                        </form>
+                    </td>
                 </tr>
                 {% endfor %}
-            </tbody>
-        </table>
-    </div>
-</body>
-</html>
+            </table>
