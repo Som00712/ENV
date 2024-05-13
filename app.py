@@ -337,29 +337,36 @@ def createquiz():
 
     # If it's not a POST request, render the form
     return render_template('create_quiz.html')
-
 @app.route('/admin/dashboard', methods=['GET', 'POST'])
 def admin_dashboard():
     if 'loggedin' in session and session['loggedin'] and 'username' in session and session['Role'] == 'admin':
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        users = None  # Initialize users variable
+
         if request.method == 'POST':
             if 'search_term' in request.form:
                 search_term = request.form['search_term']
-                cursor.execute("SELECT * FROM Users WHERE Username LIKE %s OR Email LIKE %s", (f"%{search_term}%", f"%{search_term}%"))
+                query = "SELECT UserID, Username, Email, Role FROM Users WHERE Username LIKE %s OR Email LIKE %s"
+                cursor.execute(query, ('%' + search_term + '%', '%' + search_term + '%'))
+                users = cursor.fetchall()
             elif 'update_role' in request.form:
                 user_id = request.form['user_id']
                 new_role = request.form['new_role']
                 cursor.execute("UPDATE Users SET Role = %s WHERE UserID = %s", (new_role, user_id))
                 mysql.connection.commit()
-                flash(f"Role updated successfully for user ID {user_id} to {new_role}.", 'success')
-            return redirect(url_for('admin_dashboard'))
-        else:
+                flash(f"Role updated successfully for user ID to {new_role}.", 'success')
+                return redirect(url_for('admin_dashboard'))
+
+        if users is None:  # If users is not set by search, load all users
             cursor.execute('SELECT UserID, Username, Email, Role FROM Users')
-        users = cursor.fetchall()
+            users = cursor.fetchall()
+
         return render_template('admin_dashboard.html', users=users)
+
     else:
         flash('You must be logged in as an admin to view this page.', 'error')
         return redirect(url_for('login'))
+
 
 
     
