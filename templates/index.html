@@ -7,11 +7,7 @@
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-image: url('https://images.freecreatives.com/wp-content/uploads/2016/04/Solid-Black-Website-Background.jpg'); /* Set background image */
-            background-size: cover; /* Cover the entire viewport */
-            background-position: center; /* Center the background image */
-            background-repeat: no-repeat; /* Do not repeat the background */
-            color: #333;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
             margin: 0;
             padding: 0;
             display: flex;
@@ -32,7 +28,9 @@
             margin-bottom: 30px;
         }
         form {
-            width: 100%;
+            width: 90%;
+            padding: 10px;
+            border-radius: 20px;
         }
         label {
             display: block;
@@ -63,7 +61,7 @@
             transition: background-color 0.3s;
         }
         input[type="submit"]:hover {
-            background-color: #0056b3;
+            background-color: white;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
     </style>

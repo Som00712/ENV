@@ -202,10 +202,6 @@ def generate_svg_with_graph(scores, svg_width, svg_height):
     svg.append('</svg>')
     return "".join(svg)
 
-
-
-
-
 @app.route('/take_quiz', methods=['GET', 'POST'])
 def take_quiz():
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
@@ -222,6 +218,8 @@ def take_quiz():
             return render_template('take_quiz.html', subjects=subjects)
     else:
         return redirect(url_for('login'))
+
+
 
 @app.route('/submit_quiz', methods=['POST'])
 def submit_quiz():

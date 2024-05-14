@@ -7,14 +7,14 @@
     <style>
         /* Your CSS styles go here */
         body {
-            font-family: Arial, sans-serif;
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            background-image: url('https://i.pinimg.com/originals/5b/4c/d2/5b4cd292f6f382ab8d8a51b9fcaad5ed.jpg');
-            background-size: cover;
-            background-repeat: no-repeat;
-            color: #000000; /* Set text color to black for better visibility */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
 
         label {
@@ -59,7 +59,7 @@
             }
 
             form {
-                width: 300px; /* Adjust the width of the form as needed */
+                width: 400px; /* Adjust the width of the form as needed */
                 margin: 0 auto; /* This will center the form horizontally */
             }
         }
@@ -68,8 +68,8 @@
             width: 300px;
             margin: 0 auto;
             background-color: rgba(255, 255, 255, 1.0);
-            padding: 20px;
-            border-radius: 10px;
+            padding: 30px;
+            border-radius: 20px;
         }
 
         /* Styling for error message */
@@ -77,10 +77,11 @@
             color: red;
             font-weight: bold; /* Make error message bold */
         }
+
     </style>
 </head>
 <body>
-
+    <div class="container">
     {% if msg %}
     <p class="error-message">{{ msg }}</p> <!-- Display error message in red text -->
     {% endif %}
@@ -95,6 +96,7 @@
         </select><br><br>
         <button type="submit">Register</button> <!-- Registration button -->
     </form>
+</div>
 </body>
 </html>
 

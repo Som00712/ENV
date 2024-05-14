@@ -5,98 +5,116 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Teacher Dashboard</title>
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f0f2f5;
-            margin: 0;
-            padding: 20px;
-            color: #333;
-        }
-        h1 {
-            color: #4a73aa;
+
+        /* General styling for headers to be centered */
+        #mad, .container h3 {
             text-align: center;
-        }
-        a {
-            display: inline-block;
-            background-color: #007bff;
-            color: #ffffff;
-            padding: 10px 15px;
-            border-radius: 5px;
-            text-decoration: none;
-            transition: background-color 0.3s, box-shadow 0.3s;
-        }
-        a:hover {
-            background-color: #0056b3;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #ffffff;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        .delete-button {
-            background-color: #ff6347;
-            padding: 5px 10px;
-            border-radius: 5px;
             color: white;
-            text-decoration: none;
+            margin-top: 20px; /* Adjust spacing from the top *
+            padding: 10px 20px; /* Padding inside the button */
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+
+            }
+
+            #cut {
+                background: linear-gradient(to right, #6a11cb, #2575fc);
+                display: block;          /* Change to block to work with auto margins */
+                margin: 20px auto;       /* Centers the element horizontally */
+                padding: 10px 20px;      /* Padding inside the element */
+                background-color: blue; /* Ensure proper CSS color name usage */
+                color: white;            /* Text color */
+                text-decoration: none;   /* Removes underline from links */
+                border-radius: 5px;      /* Rounded corners for aesthetics */
+                transition: background-color 0.3s; /* Smooth transition for hover effect */
+                text-align: center;      /* Centers text inside the element */
+                width: fit-content;      /* Ensures the width is just enough for the content */
+            }
+            
+        
+
+/* Styling for the quiz creation link to appear as a button */
+.container a {
+    display: inline-block; /* Allows margin, padding, and width to be adjusted */
+    margin: 20px auto; /* Centers the button and adds vertical spacing */
+    padding: 10px 20px; /* Padding inside the button */
+    background-color: red;
+    color: white; /* Text color */
+    text-decoration: none; /* Removes underline from link */
+    border-radius: 5px; /* Rounded corners for aesthetic */
+    transition: background-color 0.3s; /* Smooth transition for hover effect */
+}
+
+/* Hover effect for the button */
+.container a:hover {
+    background-color: #0056b3; /* Darker shade on hover */
+}
+
+/* Style for flash messages */
+.flash-messages p {
+    color: red; /* Makes text red */
+    text-align: center; /* Center-aligns the text */
+}
+
+        table {
+            width: 80%;
+            border-collapse: collapse;
+            font-family: 'Arial', sans-serif;
+            font-size: 16px;
+            margin: 20px auto;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
         }
-        .delete-button:hover {
-            background-color: #e53e30;
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
         }
-        .questions-list {
-            list-style: none;
-            padding: 0;
-            width: 100%;
+
+        th {
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
-        .questions-list li {
-            text-align: center;
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+            cursor: pointer;
+        }
+
+        td {
+            background-color: #fff;
+        }
+
+        caption {
+            caption-side: bottom;
             padding: 10px;
-            border-bottom: 1px solid #ccc;
-        }
-        .questions-list li:last-child {
-            border-bottom: none;
-        }
-        .flash-messages {
-            margin-bottom: 20px;
-            text-align: center;
-            animation: fadeOut 10s forwards;
-        }
-        @keyframes fadeOut {
-            0%, 80% {
-                opacity: 1;
-                visibility: visible;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+
+            a {
+                display: inline-block;
+                background-color: #007bff;
+                color: #ffffff;
+                padding: 10px 20px;
+                border-radius: 5px;
+                text-decoration: none;
+                transition: background-color 0.3s, box-shadow 0.3s;
             }
-            100% {
-                opacity: 0;
-                visibility: hidden;
-            }
-            table {
-                width: 100%;
-                border-collapse: collapse;
-            }
-            
-            th, td {
-                border: 1px solid #ccc;
-                padding: 8px;
-                text-align: left;
-            }
-            
-            th {
-                background-color: #f2f2f2;
-            }
-            
+    
         }
     </style>
 </head>
 <body>
-<div class="container">
-<div class="container">
-<h1>Welcome to the Teacher Dashboard!</h1>
-<a href="{{ url_for('createquiz') }}">Create Quiz</a>
+    <h1 id="mad">Welcome to the Teacher Dashboard</h1>
+    <a ID="cut" href="{{ url_for('createquiz') }}">Create Quiz</a>
 {% with messages = get_flashed_messages() %}
 {% if messages %}
 <div class="flash-messages">
@@ -106,8 +124,10 @@
 </div>
 {% endif %}
 {% endwith %}
+<div class="container">
+
 <div id="ManageQuestions" class="tabcontent">
-<h3>Manage Questions</h3>
+<h3 id= "mad">Manage Questions</h3>
 <table>
         <thead>
         <tr>

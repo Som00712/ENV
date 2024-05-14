@@ -25,6 +25,10 @@
                     stroke-width: 2px;
                 }
 
+
+            #stop {
+                background: linear-gradient(to right, #6a11cb, #2575fc);
+            }
         body {
             font-family: Arial, sans-serif;
             background-color: #f2f2f2;
@@ -42,7 +46,7 @@
         h1 {
             text-align: center;
             margin-bottom: 30px;
-            color: #333;
+            color: white;
         }
         form {
             padding: 20px;
@@ -56,7 +60,7 @@ header {
     justify-content: space-between;
     align-items: center;
     padding: 20px;
-    background-color: #333;
+    background: linear-gradient(to right, #6a11cb, #2575fc);
     color: #fff;
 }
 
@@ -107,7 +111,7 @@ nav ul li a:hover {
 </head>
 <body>
     <header>
-        <h1>Welcome to Quozio!</h1>
+        <h1>Welcome to Quozio</h1>
         <nav>
             <ul>
                 <li><a href="#quizzes">Quizzes</a></li>
@@ -128,6 +132,7 @@ nav ul li a:hover {
                 </select>
                 <button type="submit">Take Quiz</button>
             </form>
+            
             <div class="container">
                 <section id="latest_score">
                     <h2>Your Latest Score: {{ latest_score if latest_score else 'No recent quiz taken' }}</h2>

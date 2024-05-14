@@ -6,15 +6,14 @@
     <style>
         /* Your CSS styles go here */
         body {
-            font-family: Arial, sans-serif;
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            background-image: url('https://i.pinimg.com/originals/5b/4c/d2/5b4cd292f6f382ab8d8a51b9fcaad5ed.jpg');
-            background-size: cover;
-            background
-            background-repeat: no-repeat;
-            color: #333333;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
 
         label {
@@ -55,18 +54,13 @@
             input[type="submit"] {
                 width: 100%;
             }
-
-            form {
-                width: 300px; /* Adjust the width of the form as needed */
-                margin: 0 auto; /* This will center the form horizontally */
-            }
         }
 
         form {
             width: 300px;
             margin: 0 auto;
-            background-color: rgba(255, 255, 255, 0.7);
-            padding: 20px;
+            background-color: white;
+            padding: 30px;
             border-radius: 10px;
         }
 
@@ -74,13 +68,14 @@
         .error-message {
             color: red;
         }
+
     </style>
 </head>
 
 </head>
 <body>
-  
-    <form method="POST" action="/login">
+  <div class="container">
+    <form id="fall" method="POST" action="/login">
         <h1>Login</h1>
         <label for="username">Username:</label><br>
         <input type="text" id="username" name="username" required><br><br>
@@ -97,6 +92,7 @@
     <p class="error-message">{{ msg }}</p>
     <p><strong>Don't have an account? <a href="{{ url_for('register_form') }}">Register here<strong></a></p>
     </form>
-</body>f
+</div>
+</body>
 </html>
 
