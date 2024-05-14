@@ -365,10 +365,9 @@ def admin_dashboard():
         flash('You must be logged in as an admin to view this page.', 'error')
         return redirect(url_for('login'))
 
-
 @app.route('/leaderboard')
 def leaderboard():
-    if 'loggedin' in session and session['loggedin'] and 'username' in session and session['Role'] == 'student':
+    if 'loggedin' in session and session['loggedin'] and 'username' in session and 'Role' in session and session['Role'] in ['student', 'teacher']:
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
         cursor.execute('''
             SELECT Users.Username, SUM(Scores.Score) AS TotalScore
@@ -382,6 +381,7 @@ def leaderboard():
         return render_template('leaderboard.html', leaderboard=leaderboard, enumerate=enumerate)
     else:
         return redirect(url_for('login'))
+
 
 
 @app.route('/delete_user/<int:user_id>', methods=['POST'])
