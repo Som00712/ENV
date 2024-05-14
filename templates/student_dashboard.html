@@ -107,6 +107,60 @@ nav ul li a:hover {
         button[type="submit"]:hover {
             background-color: #0056b3;
         }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: 'Arial', sans-serif;
+            font-size: 16px;
+            margin: 20px 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            padding: 12px 15px;
+            text-align: left;
+        }
+
+        th {
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+            cursor: pointer;
+        }
+
+        .flash-messages {
+            margin-bottom: 20px;
+            text-align: center;
+            background-color: #4caf50;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            animation: fadeOut 10s forwards;
+        }
+
+        @keyframes fadeOut {
+            0%, 80% {
+                opacity: 1;
+                visibility: visible;
+            }
+            100% {
+                opacity: 0;
+                visibility: hidden;
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -114,7 +168,7 @@ nav ul li a:hover {
         <h1>Welcome to Quozio</h1>
         <nav>
             <ul>
-                <li><a href="#quizzes">Quizzes</a></li>
+                <li><a href="{{ url_for('leaderboard') }}">Leaderboard</a></li>
                 <li><a href="#progress">Progress</a></li>
                 <li><a href="#notifications">Notifications</a></li>
             </ul>
@@ -144,6 +198,7 @@ nav ul li a:hover {
                     <img src="{{ url_for('student_svg_scores') }}" alt="Performance Graph">
                 </section>
             </div>
+            
     </main>
     
     <footer>

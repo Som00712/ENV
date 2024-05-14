@@ -366,8 +366,23 @@ def admin_dashboard():
         return redirect(url_for('login'))
 
 
+@app.route('/leaderboard')
+def leaderboard():
+    if 'loggedin' in session and session['loggedin'] and 'username' in session and session['Role'] == 'student':
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('''
+            SELECT Users.Username, SUM(Scores.Score) AS TotalScore
+            FROM Scores
+            JOIN Users ON Scores.StudentID = Users.UserID
+            GROUP BY Scores.StudentID, Users.Username
+            ORDER BY TotalScore DESC
+            LIMIT 10
+        ''')
+        leaderboard = cursor.fetchall()
+        return render_template('leaderboard.html', leaderboard=leaderboard, enumerate=enumerate)
+    else:
+        return redirect(url_for('login'))
 
-    
 
 @app.route('/delete_user/<int:user_id>', methods=['POST'])
 def delete_user(user_id):
