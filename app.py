@@ -90,7 +90,7 @@ def register():
             cursor.execute('INSERT INTO Users (Username, Email, PasswordHash, Role) VALUES (%s, %s, %s, %s)', (username, email, password, default_role))
             mysql.connection.commit()
             msg = 'You have successfully registered!'
-            return redirect(url_for('student_dashboard'))  # Redirect to the default dashboard or home page
+            return redirect(url_for('login'))  # Redirect to the default dashboard or home page
     elif request.method == 'POST':
         msg = 'Please fill out the form!'
     return render_template('register.html', msg=msg)
